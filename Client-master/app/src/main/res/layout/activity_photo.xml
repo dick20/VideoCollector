@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:baselineAligned="false"
+    android:weightSum="1.0">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:id="@+id/mypreviewlayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+        </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/bitmaplayout"
+            android:layout_width="105dp"
+            android:layout_height="match_parent"
+            android:background="#88000000"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:id="@+id/image1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.33"
+                android:visibility="visible">
+
+                <ImageView
+                    android:id="@+id/mipmap1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerInside"
+                    android:visibility="visible"/>
+                <TextView
+                    android:textColor="@color/white"
+                    android:id="@+id/mipmap1_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    android:layout_gravity="bottom" />
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/image2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.33">
+
+                <ImageView
+                    android:id="@+id/mipmap2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerInside"
+                    android:visibility="visible"/>
+                <TextView
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:id="@+id/mipmap2_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom" />
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/image3"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.33">
+
+                <ImageView
+                    android:id="@+id/mipmap3"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerInside"
+                    android:visibility="visible"/>
+                <TextView
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:id="@+id/mipmap3_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"/>
+
+            </FrameLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/buttonlayout"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="right"
+
+            android:gravity="center|center_horizontal|center_vertical"
+            android:orientation="vertical"
+            android:visibility="visible"
+            android:weightSum="1">
+
+
+            <Button
+                android:id="@+id/button_upload"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:text="上传"
+                android:textSize="18sp"
+                android:visibility="visible" />
+
+            <Button
+                android:id="@+id/button_shoot"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:text="拍摄"
+                android:textSize="18sp"
+                android:visibility="visible" />
+
+            <Button
+                android:id="@+id/button_help"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:text="帮助"
+                android:textSize="18sp"
+                android:visibility="visible" />
+
+        </LinearLayout>
+
+        <SeekBar
+            android:id="@+id/seekBar_zoom"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="40dp"
+            android:layout_weight="1"
+            android:max="100"
+            android:layout_alignStart="@+id/buttonlayout" />
+
+        <TextView
+            android:visibility="invisible"
+            android:id="@+id/infomation_help"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:background="#90000000"
+            android:text="help infomation"
+            android:textColor="@color/white"
+            android:layout_alignTop="@+id/seekBar_zoom" />
+
+    </RelativeLayout>
+
+</LinearLayout>
