@@ -100,7 +100,7 @@ public class SensorUtil {
     }
 
     public String getDescription() {
-        return "mag_x,mag_y,mag_z,orien_x,gyro_rotate";
+        return "orientationX, orientationY, orientationZ; accelerationX, accelerationY, accelerationZ; magnetismX, magnetismY, magnetismZ";
     }
 
     public interface OnSensorUpdatedListener {

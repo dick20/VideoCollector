@@ -63,7 +63,7 @@ public class CollectDataActivity extends AppCompatActivity {
     private boolean initCam = true;
 
     private Camera.Parameters params;
-    private List<Integer> zoomData;
+    private List<Float> focalLengthData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,7 +115,7 @@ public class CollectDataActivity extends AppCompatActivity {
     }
 
     private void initZoom() {
-        zoomData = new ArrayList<>();
+        focalLengthData = new ArrayList<>();
     }
 
     private void initTiming() {
@@ -133,7 +133,7 @@ public class CollectDataActivity extends AppCompatActivity {
         camera = Camera.open();
         // 获取摄像头的参数
         params = camera.getParameters();
-        params.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+        params.set("focus-mode","auto");
 //        params.set("zoom",90);
         camera.setParameters(params);
 //        camera.cancelAutoFocus();
@@ -144,9 +144,10 @@ public class CollectDataActivity extends AppCompatActivity {
             public void onPreviewFrame(byte[] data, Camera camera) {
                 if (isRecording) {
                     sensorData.add(sensorUtil.getSensorDataString());
-
-                    int zoomValue = params.getZoom();
-                    zoomData.add(zoomValue);
+                    params = camera.getParameters();
+                    // 焦距
+                    Log.i(TAG,params.getFocalLength() + " focal length ");
+                    focalLengthData.add(params.getFocalLength());
                     saveFrameToFile(data);
                 }
             }
@@ -156,12 +157,14 @@ public class CollectDataActivity extends AppCompatActivity {
         initCam = true;
 
         SeekBar seekBar = (SeekBar) findViewById(R.id.seekBar);
-        seekBar.setMax(params.getMaxZoom());
+        int max_focal_length = 2;
+        seekBar.setMax(max_focal_length*100);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                params.set("zoom",i);
+                params.set("focal-length",Float.toString(convertProgress(i)));
                 camera.setParameters(params);
+                Log.i("dick2",params.getFocalLength() + " focal length "+ convertProgress(i));
             }
 
             @Override
@@ -174,6 +177,12 @@ public class CollectDataActivity extends AppCompatActivity {
 
             }
         });
+    }
+    private float convertProgress(int intVal) {
+        float result;
+        //这里/100 是因为前面每一个数都扩大10倍，因此这里需要/100还原
+        result = intVal/100f;
+        return result;
     }
 
     private void initMapDialog() {
@@ -273,9 +282,9 @@ public class CollectDataActivity extends AppCompatActivity {
         File sensorFile = new File(filename);
         try {
             FileWriter fos = new FileWriter(sensorFile);
-            fos.write("frame," +"zoom,"+ sensorUtil.getDescription() + "\n");
+            fos.write("frame," +"focal-length,"+ sensorUtil.getDescription() + "\n");
             for (int i = 0; i < sensorData.size(); ++i) {
-                fos.write(i + 1 + " : " + zoomData.get(i) + ";"+ sensorData.get(i));
+                fos.write(i + 1 + " : " + focalLengthData.get(i) + ";"+ sensorData.get(i));
                 Log.i("test"+i,i + 1 + " : " + sensorData.get(i));
                 fos.write("\n");
             }
