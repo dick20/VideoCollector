@@ -2,30 +2,26 @@ package com.getyourlocation.app.client.activity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.hardware.Camera;
+import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.SeekBar;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.getyourlocation.app.client.R;
 import com.getyourlocation.app.client.util.CommonUtil;
 import com.getyourlocation.app.client.util.SensorUtil;
 import com.getyourlocation.app.client.widget.CameraPreview;
-import com.getyourlocation.app.client.R;
 import com.getyourlocation.app.client.widget.MapDialog;
 
 import java.io.ByteArrayOutputStream;
@@ -64,6 +60,7 @@ public class CollectDataActivity extends AppCompatActivity {
 
     private Camera.Parameters params;
     private List<Float> focalLengthData;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,23 +128,31 @@ public class CollectDataActivity extends AppCompatActivity {
 
     private void initCamera() {
         camera = Camera.open();
-        // 获取摄像头的参数
+
         params = camera.getParameters();
-        params.set("focus-mode","auto");
-//        params.set("zoom",90);
-        camera.setParameters(params);
-//        camera.cancelAutoFocus();
+
         // 调整摄像头的角度
         camera.setDisplayOrientation(90);
         cameraPreview = new CameraPreview(this, camera, new Camera.PreviewCallback() {
             @Override
             public void onPreviewFrame(byte[] data, Camera camera) {
                 if (isRecording) {
+                    camera.cancelAutoFocus();
+                    Camera.Parameters parameters = camera.getParameters();
+                    if(parameters.getSupportedFocusModes().contains(Camera.Parameters.FOCUS_MODE_INFINITY)) {
+                        parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_INFINITY);
+                        camera.setParameters(parameters);
+                    }
+                    int mZoomMax = params.getMaxZoom();
+                    if (params.isSmoothZoomSupported()) {
+                        params.set("focal-length", Float.toString(mZoomMax));
+                        camera.setParameters(params);
+                    }
                     sensorData.add(sensorUtil.getSensorDataString());
                     params = camera.getParameters();
                     // 焦距
-                    Log.i(TAG,params.getFocalLength() + " focal length ");
-                    focalLengthData.add(params.getFocalLength());
+                    Log.i(TAG,mZoomMax + " focal length ");
+                    focalLengthData.add((float)mZoomMax);
                     saveFrameToFile(data);
                 }
             }
@@ -155,34 +160,6 @@ public class CollectDataActivity extends AppCompatActivity {
         FrameLayout layout = (FrameLayout) findViewById(R.id.data_preview_layout);
         layout.addView(cameraPreview);
         initCam = true;
-
-        SeekBar seekBar = (SeekBar) findViewById(R.id.seekBar);
-        int max_focal_length = 2;
-        seekBar.setMax(max_focal_length*100);
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                params.set("focal-length",Float.toString(convertProgress(i)));
-                camera.setParameters(params);
-                Log.i("dick2",params.getFocalLength() + " focal length "+ convertProgress(i));
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-    }
-    private float convertProgress(int intVal) {
-        float result;
-        //这里/100 是因为前面每一个数都扩大10倍，因此这里需要/100还原
-        result = intVal/100f;
-        return result;
     }
 
     private void initMapDialog() {
@@ -273,7 +250,7 @@ public class CollectDataActivity extends AppCompatActivity {
         });
         builder.setCancelable(true);    //设置按钮是否可以按返回键取消,false则不可以取消
         AlertDialog dialog = builder.create();  //创建对话框
-        dialog.setCanceledOnTouchOutside(true); //设置弹出框失去焦点是否隐藏,即点击屏蔽其它地方是否隐藏
+        dialog.setCanceledOnTouchOutside(true); //设置弹出框失去焦点是否隐藏,出框失去焦点是否隐藏,即点击屏蔽其它地方是否隐藏
         dialog.show();
     }
 
@@ -293,6 +270,7 @@ public class CollectDataActivity extends AppCompatActivity {
             Log.e(TAG, "", e);
         }
     }
+
     private void saveAnnotationToFile(String annotation) {
         String filename = framesDir.getParent() + File.separator + ANNOTATION_FILENAME;
         File sensorFile = new File(filename);
@@ -304,4 +282,5 @@ public class CollectDataActivity extends AppCompatActivity {
             Log.e(TAG, "", e);
         }
     }
+
 }

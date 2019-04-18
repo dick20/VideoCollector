@@ -43,8 +43,8 @@ public class SensorUtil {
     public void register() {
         sensorUtils.registerSensor();
         Sensor[] sensors = new Sensor[]{
-                sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
-                sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)
+            sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+            sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)
         };
         for (Sensor sensor : sensors) {
             sensorManager.registerListener(eventListener, sensor, SensorManager.SENSOR_DELAY_FASTEST);
